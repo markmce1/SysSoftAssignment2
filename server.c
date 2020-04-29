@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         printf("connection from client accepted");
     }
 
-    while(1){
+    /*while(1){
         memset(message,0,500);
         //READSIZE =read( cs,message,500);
         READSIZE = recv(cs, message, 2000,0);
@@ -62,7 +62,26 @@ int main(int argc, char *argv[])
         //puts(message);
         write(cs,"What ?? ", strlen("what ??"));
 
+    }*/
+    FILE *fp;
+    int ch =0;
+    char buffer[1024];
+    fp = fopen("newfile.txt", "a");
+    int words;
+
+    read(cs, &words, sizeof(int));
+
+    while(ch !=words)
+    {
+        read(cs, buffer, 255);
+        fprintf(fp, "%s", buffer);
+        ch++;
     }
+    printf("The file has been received");
+
+    close(cs);
+    close(s);
+
     if(READSIZE ==0)
     {
         puts("Client disconnected");
