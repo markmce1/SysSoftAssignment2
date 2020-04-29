@@ -1,5 +1,5 @@
 #include<stdio.h>
-//#include<stdlib.h>
+#include<stdlib.h>
 #include<string.h>
 #include<sys/socket.h>
 //#include<sys/types.h>
@@ -11,8 +11,6 @@ int main(int argc, char *argv[])
 {
     int SID;
     struct sockaddr_in server;
-    char clientMessage[500];
-    char serverMessage[500];
     //Create socket
     SID =  socket(AF_INET, SOCK_STREAM, 0);
     if(SID == -1)
@@ -34,46 +32,71 @@ int main(int argc, char *argv[])
     }
 
     printf("connected to server ok\n");
-
-    /*while(1)
-    {
-        printf("\nEnter message: ");
-        scanf("%s", clientMessage);
-
-        //send some data
-        if( send ( SID, clientMessage, strlen(clientMessage),0)<0)
-        {
-            printf("send failed");
-            return 1;
-
-        }
-        //receive a reply from the server
-        if(recv(SID, serverMessage , 500, 0 )<0)
-        {
-            printf("IO error");
-            break;
-        }
-        printf("\nServer sent:");
-        printf(serverMessage);
-        
-    } */
-
-
+    char root[] ="Root/"; //remove name root as it will need to be in the root directory
+    char sales[] = "Sales/";
+    char promotions[] ="Promotions/";
+    char offers[] = "Offers/";
+    char marketing[] ="Marketing/";
+    ///sending file craic
     FILE *f;
     int words =0;
     char buffer[1024];
     char c;
-    char enteredfilename;
-    //printf("Whats the file name?");
-    //scanf("%c", enteredfilename);
-    f = fopen("file.txt", "r");//r just means we are reading it
+    int serverpath;
+    char enteredfilename[200];
+    char file_name[300];
+    printf("Whats the file name?\n");
+    scanf("%s", enteredfilename);
+
+    strcat(sales, enteredfilename);
+    strcpy(file_name, sales);
+
+    
+    do{
+        printf("\n Enter the number of the file destinations\n1. Root\n2. Sales\n3. Promotions\n4. Offers\n5. Marketing\n6. Exit\n");
+
+        scanf("%d", &serverpath);
+        switch (serverpath)
+        {
+            case 1://root
+                strcat(root, enteredfilename);
+                strcpy(file_name,root);
+                break;
+            case 2://sales
+                strcat(sales, enteredfilename);
+                strcpy(file_name,sales);
+                break; 
+            case 3://promotions
+                strcat(promotions, enteredfilename);
+                strcpy(file_name,promotions); 
+                break;   
+            case 4://offers
+                strcat(offers, enteredfilename);
+                strcpy(file_name,offers);
+                break;
+            case 5://marketing
+                strcat(marketing, enteredfilename);
+                strcpy(file_name,marketing);
+                break;
+            case 6://exit
+                printf("Client terminated");
+                exit(1);
+            default:
+                printf("Please enter a number between 1-6");
+                break;
+        }
+    }while((serverpath != 1) && (serverpath != 2) && (serverpath != 3) && (serverpath != 4) && (serverpath != 5) && (serverpath != 6));
+
+
+
+    f = fopen(enteredfilename, "r");//r just means we are reading it
     while((c = getc(f))!= EOF)
     {
         fscanf(f, "%s", buffer);
         if(isspace(c) || c=='\t')
         words++;
     }
-
+    write(SID, file_name, 255);
     write(SID, &words, sizeof(int));
     rewind(f);
 

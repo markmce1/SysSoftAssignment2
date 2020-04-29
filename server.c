@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
     int connSize;
     int READSIZE;
     struct sockaddr_in server, client;
-    char message[500];
 
     //create socket
     s=socket(AF_INET, SOCK_STREAM,0);
@@ -54,19 +53,14 @@ int main(int argc, char *argv[])
         printf("connection from client accepted");
     }
 
-    /*while(1){
-        memset(message,0,500);
-        //READSIZE =read( cs,message,500);
-        READSIZE = recv(cs, message, 2000,0);
-        printf("Client said: %s\n", message);
-        //puts(message);
-        write(cs,"What ?? ", strlen("what ??"));
-
-    }*/
+    //receieving files
     FILE *fp;
     int ch =0;
     char buffer[1024];
-    fp = fopen("newfile.txt", "a");
+    char file_name[300];
+    //somehow read in file_name
+    read(cs, file_name, 255);
+    fp = fopen(file_name, "a");
     int words;
 
     read(cs, &words, sizeof(int));
@@ -77,7 +71,7 @@ int main(int argc, char *argv[])
         fprintf(fp, "%s", buffer);
         ch++;
     }
-    printf("The file has been received");
+    printf("The file has been received");//check if file is there in that location, otherwise say did not write
 
     close(cs);
     close(s);
