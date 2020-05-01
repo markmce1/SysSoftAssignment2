@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
         if(isspace(c) || c=='\t')
         words++;
     }
-    write(SID, file_name, 255);
+    write(SID, file_name, 255);//sends the file_name to the server
     write(SID, &words, sizeof(int));
     rewind(f);
 
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     while (ch != EOF)
     {
         fscanf(f, "%s", buffer);
-        write(SID, buffer,255);
+        write(SID, buffer,255);//sends buffer to server
         ch = fgetc(f);
     }
 
