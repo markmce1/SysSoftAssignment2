@@ -6,10 +6,12 @@
 #include<unistd.h>
 #include<pthread.h>
 
-    int s;
-    int cs;
-
-void filesender(){
+int s;
+int cs;
+//function declaration, socket_desc is cs from below
+void filesender(void *socket_desc){
+    //Get the socket descriptor
+    int sock = *(int*)socket_desc;
     //receieving files
     FILE *fp;
     int ch =0;
@@ -28,6 +30,9 @@ void filesender(){
         fprintf(fp, "%s", buffer);
         ch++;
     }
+    if(fp < 0){
+        printf("File has not been received");
+    }else
     printf("The file has been received");//check if file is there in that location, otherwise say did not write
 
     close(cs);
@@ -42,8 +47,7 @@ int main(int argc, char *argv[])
 {
     int iret1;
     pthread_t thread1;
-
-
+    
     int connSize;
     int READSIZE;
     struct sockaddr_in server, client;
@@ -89,12 +93,12 @@ int main(int argc, char *argv[])
         printf("connection from client accepted");
     }
 
-
-    iret1 = pthread_create(&thread1, NULL, filesender, (void*) s);
+    //create thread, note cs is the socket connection we accepted from client
+    iret1 = pthread_create(&thread1, NULL, filesender, (void*) &cs);
     if(iret1){
         fprintf(stderr, "Error - pthread_create() return code: %d\n",iret1);
     }
-
+    
 
 
 
