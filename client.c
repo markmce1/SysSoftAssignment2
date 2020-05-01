@@ -10,6 +10,7 @@
 int main(int argc, char *argv[])
 {
     int SID;
+    int gid,uid;
     struct sockaddr_in server;
     //Create socket
     SID =  socket(AF_INET, SOCK_STREAM, 0);
@@ -30,7 +31,10 @@ int main(int argc, char *argv[])
         printf("connect failed. Error");
         return 1;
     }
-
+    uid = getuid();
+    printf("%d\n", uid);
+    gid=getgid();
+    printf("%d\n", gid);
     printf("connected to server ok\n");
     char root[] ="Root/"; //remove name root as it will need to be in the root directory
     char sales[] = "Sales/";
@@ -48,8 +52,6 @@ int main(int argc, char *argv[])
     printf("Whats the file name?\n");
     scanf("%s", enteredfilename);
 
-    strcat(sales, enteredfilename);
-    strcpy(file_name, sales);
 
     
     do{

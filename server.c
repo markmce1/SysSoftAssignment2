@@ -6,13 +6,44 @@
 #include<unistd.h>
 #include<pthread.h>
 
+    int s;
+    int cs;
+
+void filesender(){
+    //receieving files
+    FILE *fp;
+    int ch =0;
+    char buffer[1024];
+    char file_name[300];
+    //somehow read in file_name
+    read(cs, file_name, 255);
+    fp = fopen(file_name, "a");
+    int words;
+
+    read(cs, &words, sizeof(int));
+
+    while(ch !=words)
+    {
+        read(cs, buffer, 255);
+        fprintf(fp, "%s", buffer);
+        ch++;
+    }
+    printf("The file has been received");//check if file is there in that location, otherwise say did not write
+
+    close(cs);
+    close(s);
+}
+
+
 
 
 
 int main(int argc, char *argv[])
 {
-    int s;
-    int cs;
+    int iret1;
+    pthread_t thread1;
+
+
     int connSize;
     int READSIZE;
     struct sockaddr_in server, client;
@@ -58,28 +89,14 @@ int main(int argc, char *argv[])
         printf("connection from client accepted");
     }
 
-    //receieving files
-    FILE *fp;
-    int ch =0;
-    char buffer[1024];
-    char file_name[300];
-    //somehow read in file_name
-    read(cs, file_name, 255);
-    fp = fopen(file_name, "a");
-    int words;
 
-    read(cs, &words, sizeof(int));
-
-    while(ch !=words)
-    {
-        read(cs, buffer, 255);
-        fprintf(fp, "%s", buffer);
-        ch++;
+    iret1 = pthread_create(&thread1, NULL, filesender, (void*) s);
+    if(iret1){
+        fprintf(stderr, "Error - pthread_create() return code: %d\n",iret1);
     }
-    printf("The file has been received");//check if file is there in that location, otherwise say did not write
 
-    close(cs);
-    close(s);
+
+
 
     if(READSIZE ==0)
     {
@@ -93,3 +110,4 @@ int main(int argc, char *argv[])
     return 0;
 
 }
+
